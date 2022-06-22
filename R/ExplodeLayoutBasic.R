@@ -107,7 +107,7 @@ get_nodelist_for_plotting=function(nodelist,new_coordinates){
 #' @examples
 #' exploded_nodelist=get_explode_nodelist(example_nodelist,radius=1.2)
 get_explode_nodelist=function(nodelist,radius=1){
-  exploded_coords=explode_coordinates(nodelist,radius=1.2)
+  exploded_coords=explode_coordinates(nodelist,radius=radius)
   plotting_nodelist=get_nodelist_for_plotting(nodelist,exploded_coords)
   return(plotting_nodelist)
 }
@@ -117,6 +117,7 @@ get_explode_nodelist=function(nodelist,radius=1){
 #'
 #' @param nodelist A dataframe of at least 5 columns: Label, X, Y, Color, baseShape.
 #' @param incidence_matrix A matrix where row names and column names are the node ID of a bipartite network. An element of the i-th row and j-th column of the matrix is 0 if node on row i is not connected to node on column j, and edge weight if they are connected.
+#' @param plotlabel A string indicating whether to add node label text. 'r' for rows, 'c' for columns, and 'rc' for both rows and columns of the incidence_matrix. All other strings will be ignored. Default to 'c'.
 #'
 #' @return a ggplot2 object p which can be shown using print(p).
 #' @export
@@ -125,7 +126,7 @@ get_explode_nodelist=function(nodelist,radius=1){
 #' exploded_nodelist=get_explode_nodelist(example_nodelist,radius=1.2)
 #' p=plot_binet_ggplot2(exploded_nodelist,example_incidmat)
 #' print(p)
-plot_binet_ggplot2=function(nodelist,incidence_matrix){
+plot_binet_ggplot2=function(nodelist,incidence_matrix,plotlabel='c'){
   rownames(nodelist)=nodelist$Label
   el=get_edgelist_from_incidmat(incidence_matrix)
   el$x0=nodelist[el$nodesR,'X']
@@ -144,5 +145,17 @@ plot_binet_ggplot2=function(nodelist,incidence_matrix){
                        axis.ticks.x=ggplot2::element_blank(),
                        axis.text.y=ggplot2::element_blank(),
                        axis.ticks.y=ggplot2::element_blank())
+
+  nodelist_r=nodelist[rownames(incidence_matrix),]
+  nodelist_c=nodelist[colnames(incidence_matrix),]
+  labelsize=3
+  if(plotlabel=='r'){
+    p <- p + ggplot2::geom_text(ggplot2::aes(nodelist_r$X, nodelist_r$Y,label=nodelist_r$Label),hjust=0,vjust=0, size = labelsize, fontface = "bold", check_overlap = FALSE )
+  } else if(plotlabel=='c'){
+    p <- p + ggplot2::geom_text(ggplot2::aes(nodelist_c$X, nodelist_c$Y,label=nodelist_c$Label),hjust=0,vjust=0, size = labelsize, fontface = "bold", check_overlap = FALSE )
+  } else if(plotlabel=='rc'){
+    p <- p + ggplot2::geom_text(ggplot2::aes(nodelist$X, nodelist$Y,label=nodelist$Label),hjust=0,vjust=0, size = labelsize, fontface = "bold", check_overlap = FALSE )
+  }
+
   return(p)
 }
