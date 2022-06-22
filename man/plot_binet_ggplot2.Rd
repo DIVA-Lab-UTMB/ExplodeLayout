@@ -4,12 +4,14 @@
 \alias{plot_binet_ggplot2}
 \title{Plot bipartite network given node list (label, coordinates, shape, color) and incidence matrix.}
 \usage{
-plot_binet_ggplot2(nodelist, incidence_matrix)
+plot_binet_ggplot2(nodelist, incidence_matrix, plotlabel = "c")
 }
 \arguments{
 \item{nodelist}{A dataframe of at least 5 columns: Label, X, Y, Color, baseShape.}
 
 \item{incidence_matrix}{A matrix where row names and column names are the node ID of a bipartite network. An element of the i-th row and j-th column of the matrix is 0 if node on row i is not connected to node on column j, and edge weight if they are connected.}
+
+\item{plotlabel}{A string indicating whether to add node label text. 'r' for rows, 'c' for columns, and 'rc' for both rows and columns of the incidence_matrix. All other strings will be ignored. Default to 'c'.}
 }
 \value{
 a ggplot2 object p which can be shown using print(p).
